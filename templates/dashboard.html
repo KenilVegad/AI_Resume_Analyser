@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Welcome, {{ user }}</h2>
+
+<div class="card">
+    <h3>Resume Analyser</h3>
+
+    <form method="POST" enctype="multipart/form-data">
+        <textarea name="resume" placeholder="Paste your resume(optional)"></textarea>
+
+        <p>OR upload file:</p>
+
+        <label for="resumeFile" class="upload-btn">
+            📄 Choose Resume
+        </label>
+
+        <input type="file" id="resumeFile" name="file" accept=".pdf,.doc,.docx,.txt" hidden>
+
+        <p id="file-name" class="file-name">
+            No file selected
+        </p>
+
+        <input type="text" name="role" placeholder="What do you want to become?" required>
+
+        <button type="submit">Analyze</button>
+    </form>
+</div>
+
+{% if result %}
+<div class="red">
+
+    {% if "error" in result %}
+    <p style="color:red;">Error: {{ result.error }}</p>
+    {% endif %}
+
+    <h3>Skills</h3>
+    <ul>
+        {% for s in result.get("skills", []) %}
+        <li>{{ s }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Missing Skills</h3>
+    <ul>
+        {% for s in result.get("missing_skills", []) %}
+        <li>{{ s }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Roadmap</h3>
+    <ul>
+        {% for s in result.get("roadmap", []) %}
+        <li>{{ s }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Interview Questions</h3>
+    <ul>
+        {% for s in result.get("interview_questions", []) %}
+        <li>{{ s }}</li>
+        {% endfor %}
+    </ul>
+
+</div>
+
+
+{% endif %}
+
+<script>
+const fileInput = document.getElementById("resumeFile");
+const fileName = document.getElementById("file-name");
+
+fileInput.addEventListener("change", function () {
+    if (this.files.length > 0) {
+        fileName.innerHTML = "✅ " + this.files[0].name;
+    } else {
+        fileName.innerHTML = "No file selected";
+    }
+});
+</script>
+
+{% endblock %}
